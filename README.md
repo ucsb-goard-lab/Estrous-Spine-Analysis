@@ -1,6 +1,6 @@
 # ReadME
 
-## Spine-Analysis-Pipeline
+## Estrous-Spine-Analysis
 
 Pipeline for morphological classification of dendrite spines.  
 Originally, created in part for analysis of dendritic spine turnover due to estrous cycle changes, this pipeline is modular for both cross sectional and time series analysis, and includes the option to account for estrous cycle stage.
@@ -8,7 +8,7 @@ Originally, created in part for analysis of dendritic spine turnover due to estr
 ## Features
 
 ### Time Series Analysis
-Runs getAllSpines (and subsequent functions) to determine the total population of spines to calculate turnover dynamics. Gaussian averaged images, binarized images, and super resolution images of the data are first produced. Manual selection of the threshold and editing of dendrites in each image is allowed. Then spine detection occurs. Spines are separated based on boundary boxes with centroids > 25 pixels (~1.7 microns) apart. Two 4D matrices (spine width x spine height x num days x num spines) are generated for each spine. Additionally, after spines are individually registered, classification based on morphological factors occurs. The four spine types are stubby, thin, mushroom, or filopodium. Users can edit the spines detected. Another GUI runs to allow selection of the spines the program could not ascertain as a spine (outliers), allowing for manual selection and classification.
+Runs getAllSpines (and subsequent functions) to determine the total population of spines to calculate turnover dynamics. Gaussian averaged images, binarized images, and super resolution images of the data are first produced. Manual selection of the threshold and editing of dendrites in each image is allowed. Then spine detection occurs. Spines are separated based on boundary boxes with centroids > 25 pixels (~1.7 microns) apart. Two 4D matrices (spine width x spine height x num days x num spines) are generated for each spine. Additionally, after spines are individually registered, classification based on morphological factors occurs. The four spine types are stubby, thin, mushroom, or filopodium. Another GUI runs to allow selection of the spines the program could not ascertain as a spine (outliers), allowing for manual selection and classification.
 
 ### Cross Sectional Analysis
 
@@ -41,6 +41,16 @@ Estrous cycle classifications saved as a cell array of strings can be preloaded 
           * getAllSpines.m
           * crossSectionalSpineAnalysis.m
           * analyzeDendrite_NSWEdit.m
+      * preProcessing
+          * A_masterSpinePreProcessing.m
+          * B_registerDendriteSeries.m
+          * C_cropRegisteredDendrites.m
+          * D_normalizeLuminanceDendrites.m
+              * ClassesAndHelpers
+                * batchRegisterDendritePlanes.m
+                * batchSortImages.m
+                * batchTifConvert_APTS_Dendrites.m
+                * GausAvgPlanes.m
       * subfunctions
           * violinplot.m
           * getManualSpines.m
@@ -90,23 +100,6 @@ Estrous cycle classifications saved as a cell array of strings can be preloaded 
       * Images shown are of threshold x0.75, x1, x1.25 of current
   2. Remove/Add Portion of Dendrite: “adding” a portion of the image increases threshold by x 1.8
       <br> Note: If add/remove and then re-binarize, will revert to before addition/removal of ROI </br>
-
-#### Manual Spine Classification Approval
-1. Will be shown a diagram of the spines and color coded based on the type of spine (determined by program)
-<br>Legend</br>
-      * magenta - stubby
-      * cyan - thin
-      * yellow - mushroom
-      * green - filopodia
-2. Option to add or remove spines:
-   * Add:
-     <br> 1. select spine region and make sure first and final point for ROI connects  </br> 
-        2. Select the classification for the spine
-        3. Confirm classification
-   * Subtract:
-        <br> 1. Choose spine number wish to remove </br>
-        2. Confirm selection
-   * Neither: Saves all changes and continues analysis
 
 #### SpineDetectionGUI
 GUI for selecting spines the program could not determine  
