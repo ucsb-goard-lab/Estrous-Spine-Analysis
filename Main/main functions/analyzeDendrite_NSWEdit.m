@@ -94,7 +94,7 @@ for dendriteIdx = 1:dendriteList.NumObjects
     % identify and classify each spine based on standard criteria (morphological approach)
     % also segments out single spine images (option to save later on)
     for i = 1:(length(denInfo.x_end)) 
-           spineClass = getSpineMorphologyClass(i,denInfo,BW);
+           spineClass = getSpineMorphologyClass(i,denInfo,BW,mean_image);
            morphologicalClassification(spineClass);
            midpoint_base = spineClass.midpoint_base;
            spine_fill = spineClass.spine_fill;
@@ -140,6 +140,10 @@ for dendriteIdx = 1:dendriteList.NumObjects
             spine_data{count_spines_found,14} = spine_fill;
             spine_data{count_spines_found,15} = [props.Centroid];
             spine_data{count_spines_found,16} = BB;
+            spine_data{count_spines_found,17} = im.brightness;
+            spine_data{count_spines_found,18} = im.head_width;
+            spine_data{count_spines_found,19} = im.neck_width;
+
 
             min_r = floor(BB(2))-10; % set bounding box parameters, adjusting for when they exceed image bounds
             if min_r <1

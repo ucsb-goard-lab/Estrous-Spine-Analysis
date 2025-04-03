@@ -59,7 +59,7 @@ classdef getSpineMorphologyClass < handle
     end
 
     methods
-        function obj = getSpineMorphologyClass(i1, denInfo, BW, avg_im)
+        function obj = getSpineMorphologyClass(i1, denInfo, BW)
             %GETSPINEMORPHOLOGYCLASS Construct an instance of this class
             %   stores parameters and measurements of dendrites
             obj.i = i1;
@@ -215,20 +215,18 @@ classdef getSpineMorphologyClass < handle
         end
 
         function obj = getSpineBrightness(obj)
-            % Calculate inregrated spine brightness as the sum of all
-            % points within the binary spine mask
-            if max(max(obj.avg_spine_im)) > 1 % make sure image scales between 0 and 1
-                obj.avg_spine_im = rescale(obj.avg_spine_im);
-            end
-            spine_avg_masked = obj.avg_spine_im(logical(obj.spine_fill)); % use spine fill to mask average spine image
-            obj.im.brightness = sum(spine_avg_masked);
+            if max(max(spine_im_avg)) > 1 % make sure image scales between 0 and 1
+    spine_im_avg = rescale(spine_im_avg);
+end
+spine_avg_masked = spine_im_avg(logical(spine_fill)); % use spine fill to mask average spine image
+spine_brightness = sum(spine_avg_masked);
+im.brightness = spine_brightness;
         end
 
         function obj = morphologicalClassification(obj)
             obj.minDistance;
             obj.spineExtrapolation;
             obj.spineComponentExtraction;
-            obj.getSpineBrightness;
 
             %% Get new parameters and morphological classification
             num_params = 4;
