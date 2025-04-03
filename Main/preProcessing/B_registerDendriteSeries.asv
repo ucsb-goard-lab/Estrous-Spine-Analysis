@@ -1,0 +1,74 @@
+function [] = B_registerDendriteSeries(fixed_flag,imsize,newdir_name,png_path)
+%% Register dendrites either consecutively or to a fixed image
+%-------------------------------------------------------------------------%
+%   This function allows the user to specify mode of registration, then
+%   perform that registration on all dendrites in a folder.
+%
+%   Base directory should be directory containing png series, and can be
+%   set manually as an input argument.
+%
+%   Written by NSW 01/10/2025 Last updated by NSW 02/05/2025
+%-------------------------------------------------------------------------%
+if nargin  < 1 || isempty(fixed_flag)
+    fixed_flag = 1; % if true, registers to fixed image. if false, registers consecutively
+end
+if nargin < 2 || isempty(imsize)
+    imsize = 760; % default image size (output from prairieview)
+end
+if nargin < 3 || isempty(newdir_name)
+    newdir_name = 'registered';
+end
+if nargin < 4 || isempty (png_path)
+    png_path = pwd; % folder that PNGs to register are in, defaults to current working directory
+end
+
+%% Add path to natural sorting file system
+addpath(genpath('E:\Code\Spine-Analysis-Pipeline-main_Mounami'))
+
+%% Register with regular-step gradient descent
+mkdir(newdir_name)
+
+optimizer = registration.optimizer.RegularStepGradientDescent;
+metric = registration.metric.MeanSquares;
+
+ims = dir(fullfile(png_path,'*.png'));
+ims = natsortfiles(ims);
+imagestack = zeros(imsize, imsize, length(ims)); % set up array to hold dendrite images
+for pp = 1:length(ims)
+    imagestack(:,:,pp) = imread(ims(pp).name);
+end
+
+if fixed_flag
+    % figure
+    % montage(imagestack)
+    % prompt = "Which recording would you like to register to? ";
+    % fixed_idx = input(prompt);
+    fixed_idx = 1; % uncomment previous to let the user choose which image to register to
+    idx_vec = 1:length(ims); % get indices of non-fixed images
+    idx_vec(fixed_idx) = []; % remove fixed image index
+else
+    fixed_idx = []; % if sampling consecutively, leave empty
+    idx_vec = 2:length(ims); % assume fixed is first
+end
+
+% Save first image to new directory
+first_name = ims(1).name;
+first_im = imread(ims(1)name);
+newname = strcat(png_path,'\',newdir_name,'\',first_name(1:end-4),'_',newdir_name,'.png');
+imwrite(first_im,newname) % save registered moving image to new directory
+
+% Register
+for i = 1:length(ims)-1
+    disp(['Registering Image',' ',num2str(idx_vec(i)),'...']) % display current image
+    moving_idx = idx_vec(i); % index without the fixed image
+    if ~fixed_flag % if sampling consecutively
+        fixed_idx = moving_idx - 1; 
+    end
+    mname = ims(moving_idx).name;
+    moving = imread(mname);
+    fname = ims(fixed_idx).name;
+    fixed = imread(fname);
+    movingRegistered = imregister(moving,fixed,"rigid",optimizer, metric);
+    newname = strcat(png_path,'\',newdir_name,'\',mname(1:end-4),'_',newdir_name,'.png');
+    imwrite(movingRegistered,newname) % save registered moving image to new directory
+end
