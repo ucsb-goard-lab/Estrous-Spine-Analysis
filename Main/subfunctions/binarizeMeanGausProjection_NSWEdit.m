@@ -28,23 +28,6 @@ elseif (nargin < 7)
     resize_imgs_if_needed = 1;
 end
 
-% %% For testing purposes import data with this:
-% [image_name,file_path] = uigetfile('Select data file');
-% data = load(fullfile(file_path,image_name));
-% mean_image = data.gaus_mean_projection;
-% binarized_branch_images = 'C:\Users\Goard Lab\Dropbox\CodeInBeta_Marie\DendriticSpines\Data\binarizedBranches';
-% show_image_steps = 1;
-% numPixelsOfEachImage = 760;
-% skip_manual_binarization = 0;
-% resize_imgs_if_needed = 1;
-%
-% %set path for helper functions - gen path gets all subfolders too
-% addpath(genpath('C:\Users\Goard Lab\Dropbox\CodeInBeta_Marie\DendriticSpines\Functions'));
-%
-% %add path for data
-% addpath(file_path)
-
-
 %% Resizing Image
 if resize_imgs_if_needed == 1
     s4 = size(mean_image);
@@ -74,11 +57,6 @@ if resize_imgs_if_needed == 1
         if s4(2) > numPixelsOfEachImage
             mean_image = mean_image(:,1:numPixelsOfEachImage);
         end
-        % For testing purposes uncomment these lines:
-        % disp('size of dendrite after padding')
-        % disp(num2str(size(dendrite)))
-        % disp(num2str(numPixelsOfEachImage-s(1)))
-        % disp(num2str(numPixelsOfEachImage-s(2)))
 
     end
 end
@@ -92,7 +70,7 @@ cd(oldFolder)
 
 fname = (strcat(erase(image_name,'.mat'),'.png'));
 ind=find(ismember(BW_images(1,:),fname), 1);
-%%
+
 if isempty(ind) %if it hasn't then binarize it
     img_filt = getFilteredImagesClass();
     superResolution(img_filt, mean_image, show_image_steps);
